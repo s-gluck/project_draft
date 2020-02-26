@@ -1,0 +1,292 @@
+---
+title: "Final Project - Draft"
+author: "Stephanie Gluck"
+date: "2/24/2020"
+output: html_document
+---
+
+```{r setup}
+#General packages 
+library(rio)
+library(here)
+library(ggplot2)
+library(tidyverse)
+library(readr)
+library(pander)
+library(psych)
+
+#Alluvial plot 
+#library(alluvial)
+# devtools::install_github('thomasp85/ggforce')
+library(ggforce)
+# devtools::install_github("corybrunson/ggalluvial")
+library(ggalluvial)
+library(ggparallel)
+
+#Venn diagram 
+library(VennDiagram)
+
+#Mosaic plot 
+library(ggmosaic)
+
+```
+
+```{r load_data}
+
+d <- read_csv(here("data", "adj_percent.csv"))
+d_valence <- read_csv(here("data", "adj_percent_valence.csv"))
+mmd <- read_csv(here("data", "proj_data.csv"))
+
+```
+
+
+```{r data_wrangling}
+
+d <- d %>% mutate(self_total = o_self + o_both, 
+                  other_total = o_other + o_both)
+
+
+d_valence <- d_valence %>% mutate(self_total = o_self + o_both, 
+                                  other_total = o_other + o_both)
+
+```
+
+
+## Project Summary 
+
+### Background 
+
+I have a dataset I collected that examines how individuals evaluate their social relationships that vary in the degree of closeness – a person they are close with, an acquaintance and a disliked person – and the extent to which they report a self-other overlap with that person. Self-other overlap, in close relationship can be broadly defined as the extent that one sees the other person as part of the self, a sense of shared identity or interconnectedness.   
+
+Participants completed the same measure of relationship closeness and self-other overlap for all three targets: 1) a person they are close with (significant other or best friend), 2) an acquaintance, and 3) a disliked person. 
+
+Based on previous studies (Myers & Hodges, 2011) the questionnaires I used are meant to assess two separate factors of self-other overlap (see section below for sample items). A more direct and conscious perception of closeness and a less direct measure meant to tap the cognitive representations of the self and other (e.g., a trait adjective checklist). 
+
+### Sample Items 
+
+**Sample items for direct perception of closeness:**
+
+Please circle the picture below which best describes your relationship with [the target]
+Inclusion of Other in the Self Scale (Aron et al., 1992)
+![IOS](IOS.png)
+ 
+Indicate on 7-pt scale – 1 (not at all) to 7 (extremely) – the extent to which:
+
+You would use the term “we” to describe your relationship with this person. 
+You think this person is similar to you
+You and this person share many of the same interests
+
+**Sample items for cognitive representation of the self and other:** 
+
+Trait Adjective Checklist sample items (total of 114 adjectives). 
+
+Which of the following adjectives do you consider to be descriptive of yourself / [target]? Select all that applies. 
+Adaptable 
+Aggressive 
+Clever
+Curious 
+Quiet
+Reserved 
+Outspoken
+Rude 
+Tense 
+Wholesome 
+
+
+## Visualization Idea
+
+For the final project, I plan to create three different type of visualization to help me visualize my relationship data: 
+
+1) Venn Diagram 
+2) Alluvial / Sankey Diagram 
+3) Mosaic Plot 
+
+With the visualization, I hope to summarize the number of trait adjectives (total of 114) that a person selects for themselves relative to the number of adjectives the person selects for the other targets (close, acquaintance and dislike) and the amount of overlap between those trait adjectives. The trait adjectives are also categorized by valence (positive, neutral, negative) so I also hope to be able to visualize my data by valence and types of social relationship (e.g., positive adjectives for acquaintance or negative adjectives for a disliked person).
+
+I also want to calculate a self-percentage and an other-percentage score from the Adjective Checklist. The self-percentage is the proportion of traits that one attributes to the self that is later ascribed to the target while the other-percentage is the proportion of the target’s trait that is shared with the self. I have included an example below: 
+
+For example, Sally selected 20 adjectives for both her and her best friend (close target), 10 adjectives that was unique to Sally and 30 adjectives unique to her best friend. 
+
+The total # of adjective Sally selected for herself would be:
+20 (shared) + 10 (self unique) = 30
+
+Total # of adjective for her best friend would be:
+20 (shared) + 30 (close unique) = 50 
+
+Self-percentage: 
+20 / 30 = 0.66 or 66%
+
+Other-percentage: 
+20 / 50 = 0.4 or 40%
+
+## Venn diagram 
+
+How I envision the venn diagram to look like such that the size of the circle is relative to the number of adjective that is selected for the self and the other person (close, acquaintance, disliked person) 
+
+Taking the Sally example from above, the self-circle will be smaller with overall less number of total adjectives selected (30) while the close person circle will be bigger because more total number of adjectives are selected (50). The amount of overlap for the self-circle will be more (66% overlap) compared to the target circle (40% overlap) relative to its overall size.
+
+30 = adjectives unique to the close target
+20 = adjectives shared by self and target 
+10 = adjectives unique to the self 
+
+
+```{r venn_diagram, fig.width = 5, fig.height = 5}
+grid.newpage()
+draw.pairwise.venn(area1 = 50, 
+                   area2 = 30, 
+                   cross.area = 20, 
+                   category = c("Close Person", "Self"), 
+                   fill = c("#e7298a", "#1b9e77"), 
+                   cex = 2)
+```
+
+
+## Alluvial / Sankey diagram 
+
+For the Alluvial Diagram, I want to first visualize the overall average self-percentage across all participants separted by relationship closeness (close, acquaintance,disliked person) and valence (postive, neutral, negative) and I later hope to select around 3 specific particpiants to plot their data ontop of the overall average (so to show how a specific individuals self-percentage score compares to the overall scores). For my draft, I'm not quite at the individual participant levels yet as I'm still learning how to plot the Alluvial diagram. 
+
+
+```{r alluvial_data}
+
+alluvial_d <- d_valence %>% 
+  group_by(relationship, valence) %>% 
+  summarize(mean = mean(self_percent, na.rm = T)*100) %>% 
+  mutate(self = paste("Self")) %>% 
+  ungroup() %>%  
+  mutate(valence = str_to_title(valence), 
+         relationship = as.factor(relationship), 
+         valence = as.factor(valence)) %>%  
+  mutate(relationship = fct_relevel(relationship, "close_overlap",
+                                    "acq_overlap", 
+                                    "dislike_overlap"),
+         valence = fct_relevel(valence, "Positive", "Neutral", "Negative"),
+         relationship = recode(relationship, 
+                               "close_overlap" = "Close Person", 
+                               "acq_overlap" = "Acquaintance", 
+                               "dislike_overlap" = "Disliked Person"))
+
+levels(alluvial_d$relationship)
+levels(alluvial_d$valence)
+
+```
+
+This is the data I intended to summarize with my Alluvial plot 
+
+```{r alluvial_table}
+pander(alluvial_d)
+```
+
+
+```{r alluvial, fig.width = 10, fig.height = 8}
+
+ggplot(alluvial_d, aes(y = mean, axis1 = self, axis2 = relationship, axis3 = valence)) +
+  geom_alluvium(aes(fill = relationship), width = 1/12, color = "gray40", knot.pos = .2) +
+  geom_stratum(width = 1/6, fill = "gray70", color = "gray40") +
+  geom_label(stat = "stratum", infer.label = TRUE) +
+  scale_x_discrete(limits = c("Self", "Relationship", "Valence"),
+                   expand = c(.05, .05)) +
+  theme_minimal(15) + 
+  scale_fill_brewer(palette = "Dark2") + 
+  guides(fill = FALSE) + 
+    labs(x = "",
+       y = "Percent",
+       title = "Self-Other Overlap Scores from Adjective Checklist", 
+       subtitle = "By Relationship Closeness and Valence", 
+       caption = "N = 155") + 
+  theme(plot.title.position = "plot", 
+        legend.position = "none",
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(), 
+        panel.grid.major.y = element_blank(), 
+        panel.grid.minor.y = element_blank())
+  
+```
+
+
+## Mosaic Plot 
+
+For the Mosaic Plot, I want to visualize the response that participants (N = 155) selected for the Inclusion of Other in the Self Scale (Aron et al., 1992; IOS) for the different targets that varied in closeness. I hypothesize that participatns are more likely to indicate closeness -- greater overlap in their cricles -- in the close relatioship (a best friend or significant other) compared to an acquaintance or a disliked person. 
+
+The IOS is a one item measure consisting of seven pair of circle -- with one circle representing the self and the other representing another person -- that vary in the extent to which the circle overlap with each other. 
+
+Inclusion of Other in the Self Scale (Aron et al., 1992)
+![IOS](IOS.png)
+
+1 = Self and Other as separte circles that do not overlap (top left)
+7 = Self and Other as the most overlapped cirle (bottom right)
+
+
+```{r mosaic_data}
+
+#data wrangling 
+mosaic_d <- mmd %>% select(contains("IOS")) %>% 
+  pivot_longer(1:3, names_to = "relationship", values_to = "IOS") %>%  
+  mutate_if(is.numeric, as.factor) %>% 
+  mutate(relationship = as.factor(relationship)) %>% 
+  mutate(relationship = recode(relationship, "close_IOS" = "Best Friend or Significant Other", 
+                               "acq_IOS" = "Acquaintance", 
+                               "dislike_IOS" = "Disliked Person"), 
+         relationship = fct_relevel(relationship, "Best Friend or Significant Other", 
+                                    "Acquaintance", 
+                                    "Disliked Person")) 
+```
+
+This is the data I intended to summarize with my mosaic plot 
+
+```{r mosaic_table}
+
+mosaic_table <- mosaic_d %>% 
+  group_by(relationship, IOS) %>% 
+  summarise
+
+pander(mosaic_table)
+
+```
+
+
+```{r mosaic_plot, fig.width = 10, fig.height = 8}
+
+#plot 
+ggplot(data = mosaic_d) +
+  geom_mosaic(aes(x = product(IOS), fill=IOS), na.rm=TRUE) +
+  facet_wrap(~relationship, nrow = 3) + 
+  scale_fill_viridis_d() + 
+  theme_minimal(15) + 
+  labs(x = "Frequency", 
+       y = "", 
+       title = "Distribution of IOS Response by Relationship Closeness", 
+       caption = "N = 155") + 
+  theme(plot.title.position = "plot", 
+        panel.grid.major.y = element_blank(), 
+        panel.grid.minor.y = element_blank())
+```
+
+
+
+
+```{r, include = F, eval =  F}
+
+
+  labs(x = "Difference in log odds of a crime being committed",
+       y = "",
+       title = "Probability of differential crime rates between neighborhoods", 
+       subtitle = "<span style = 'color : #009E73'>Regis</span> compared to <span style = 'color : #CC79A7'>Barnum</span>",
+       caption = "Each ball represents 5% probability") + 
+  theme(plot.title.position = "plot", 
+        legend.position = "none",
+        plot.subtitle = element_markdown(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(), 
+        panel.grid.major.y = element_blank(), 
+        panel.grid.minor.y = element_blank())
+
+grid.newpage()
+draw.triple.venn(area1 = 3472, area2 = 3528, area3 = 3492, n12 = 3176, n23 = 3323, n13 = 3182, n123 = 3096, category = c("sample1", "sample2", "sample3"), lty = "blank", fill = c("skyblue", "pink1", "mediumorchid") , cex=2, cat.cex=2, cat.fontfamily = rep("serif", 3))
+
+
+grid.newpage()
+venn.diagram(list(B = 1:1800, A = 1571:2020),fill = c("red", "green"),
+  alpha = c(0.5, 0.5), cex = 2, cat.fontface = 4,lty =2, fontfamily =3, 
+   filename = "trial2.emf")
+```
+
