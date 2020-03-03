@@ -290,3 +290,20 @@ venn.diagram(list(B = 1:1800, A = 1571:2020),fill = c("red", "green"),
    filename = "trial2.emf")
 ```
 
+Asha's comments:
+
+Strengths: 
+Stephanie's skills are way advance than mine. I think I have learnt more than I could contribute to her excellent work.
+1. Creative and excellent ways of visualizing her research data
+2. Lots of new ways and ideas that I have not come across before
+3. Clear coding steps, commenting and 
+
+I learned:
+
+1. There is no limit to how creative one can become with data visualization. Almost all of your visualizations are new to me. 
+
+To improve:
+theme(plot.title.position) = "plot" and 
+plot.subtitle(element_markdown) 
+are hindering the reproducibility of your complete work. I tried several times and installed all the packages you have used but in vain.
+You may like to look at it again before final submission.
