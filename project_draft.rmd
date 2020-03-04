@@ -177,7 +177,7 @@ pander(alluvial_d)
 ```
 
 
-```{r alluvial, fig.width = 10, fig.height = 8}
+```{r alluvial, fig.width = 10, fig.height = 10}
 
 ggplot(alluvial_d, aes(y = mean, axis1 = self, axis2 = relationship, axis3 = valence)) +
   geom_alluvium(aes(fill = relationship), width = 1/12, color = "gray40", knot.pos = .2) +
@@ -193,6 +193,7 @@ ggplot(alluvial_d, aes(y = mean, axis1 = self, axis2 = relationship, axis3 = val
        title = "Self-Other Overlap Scores from Adjective Checklist", 
        subtitle = "By Relationship Closeness and Valence", 
        caption = "N = 155") + 
+  coord_flip()+
   theme(plot.title.position = "plot", 
         legend.position = "none",
         axis.text.y = element_blank(),
@@ -202,6 +203,12 @@ ggplot(alluvial_d, aes(y = mean, axis1 = self, axis2 = relationship, axis3 = val
   
 ```
 
+Hi Stephanie,
+I'm really excited to learn about this ggalluvial package but somehow I cannot produce this plot. If your computer has no problem with it please ignore this message. 
+From you code I can see and I really like the way you modify the labs and theme to make this plot more interpretable on its own. And the Alluvial plot is amazing!
+I know nothing about this package but I find the seven white boxes labelling the three sections such as "close person" and the other six are a bit distracting and taking away my attention on the beautiful relationship flow. My suggestion is to coord_flip the plot and then you have more space inside each bucket to insert the labels. I also changed the fig-height to make the plot more proportional.
+
+Claire
 
 ## Mosaic Plot 
 
@@ -261,7 +268,9 @@ ggplot(data = mosaic_d) +
         panel.grid.minor.y = element_blank())
 ```
 
-
+Hi Stephanie,
+Somehow I get error message again so this plot doesn't display on my screen. The error message is ""plot.title.position" is not a valid theme element name." 
+I only ran the plot WITHOUT theme() but still can see that it is BEAUTIFUL. I can say it's perfect.
 
 
 ```{r, include = F, eval =  F}
@@ -290,3 +299,10 @@ venn.diagram(list(B = 1:1800, A = 1571:2020),fill = c("red", "green"),
    filename = "trial2.emf")
 ```
 
+It's so unfortunate that I cannot display this plot, which I believe will be amazing. the error message I got is "Warning message:
+In grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y,  :
+  font family not found in Windows font database", then it stuck there.
+  
+Overall, this is an excellent work! I really learned a lot from your code. Thanks!!
+
+Claire
