@@ -192,14 +192,15 @@ ggplot(alluvial_d, aes(y = mean, axis1 = self, axis2 = relationship, axis3 = val
        y = "Percent",
        title = "Self-Other Overlap Scores from Adjective Checklist", 
        subtitle = "By Relationship Closeness and Valence", 
-       caption = "N = 155") + 
-  theme(plot.title.position = "plot", 
-        legend.position = "none",
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(), 
-        panel.grid.major.y = element_blank(), 
-        panel.grid.minor.y = element_blank())
+       caption = "N = 155")  
+  # theme(plot.title.position = "plot", 
+  #       legend.position = "none",
+  #       axis.text.y = element_blank(),
+  #       axis.ticks.y = element_blank(), 
+  #       panel.grid.major.y = element_blank(), 
+  #       panel.grid.minor.y = element_blank())
   
+# Thuy: I'm not so sure why I got this message for all theme here and below: "plot.title.position" is not a valid theme element name". So I just comment this out to run the code and see your plot
 ```
 
 
@@ -255,10 +256,10 @@ ggplot(data = mosaic_d) +
   labs(x = "Frequency", 
        y = "", 
        title = "Distribution of IOS Response by Relationship Closeness", 
-       caption = "N = 155") + 
-  theme(plot.title.position = "plot", 
-        panel.grid.major.y = element_blank(), 
-        panel.grid.minor.y = element_blank())
+       caption = "N = 155")  
+  # theme(plot.title.position = "plot", 
+  #       panel.grid.major.y = element_blank(), 
+  #       panel.grid.minor.y = element_blank())
 ```
 
 
@@ -288,5 +289,8 @@ grid.newpage()
 venn.diagram(list(B = 1:1800, A = 1571:2020),fill = c("red", "green"),
   alpha = c(0.5, 0.5), cex = 2, cat.fontface = 4,lty =2, fontfamily =3, 
    filename = "trial2.emf")
+
+# Thuy: I guess you have a plot to show here as well? For now I don't see ggplot part before labs and theme. 
+
 ```
 
